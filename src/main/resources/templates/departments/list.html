@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>부서 관리</title>
+    <style>
+        body { font-family: sans-serif; max-width: 640px; margin: 30px auto; padding: 0 16px; }
+        nav a { margin-right: 12px; text-decoration: none; color: #2563eb; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f5f5f5; }
+        .btn { padding: 6px 12px; border: 1px solid #888; background: #fff; border-radius: 4px;
+               cursor: pointer; text-decoration: none; color: #222; font-size: 14px; }
+        .btn-primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .btn-danger { color: #b91c1c; border-color: #b91c1c; }
+        .message { background: #e0f2fe; padding: 10px; border-radius: 4px; margin: 12px 0; }
+        .error { color: #b91c1c; font-size: 13px; margin-top: 4px; }
+        form.inline { display: inline; }
+        .num { text-align: right; }
+    </style>
+</head>
+<body>
+<nav>
+    <a th:href="@{/employees}">직원</a>
+    <a th:href="@{/departments}">부서</a>
+</nav>
+<h1>부서 관리</h1>
+
+<div class="message" th:if="${message}" th:text="${message}"></div>
+
+<form th:action="@{/departments}" th:object="${departmentForm}" method="post">
+    <input type="text" th:field="*{name}" placeholder="새 부서명">
+    <button type="submit" class="btn btn-primary">부서 추가</button>
+    <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+</form>
+
+<table>
+    <thead>
+    <tr><th>번호</th><th>부서명</th><th class="num">소속 직원</th><th>관리</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="d : ${departments}">
+        <td th:text="${d.id}"></td>
+        <td th:text="${d.name}"></td>
+        <td class="num" th:text="${d.employeeCount} + '명'"></td>
+        <td>
+            <form class="inline" th:action="@{/departments/{id}/delete(id=${d.id})}" method="post"
+                  onsubmit="return confirm('정말 삭제할까요?');">
+                <button type="submit" class="btn btn-danger">삭제</button>
+            </form>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(departments)}">
+        <td colspan="4" style="text-align:center; color:#888;">등록된 부서가 없습니다.</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
